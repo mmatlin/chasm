@@ -1,0 +1,4 @@
+(library
+ (name emit)
+ (public_name chasm.emit)
+ (libraries chasm))

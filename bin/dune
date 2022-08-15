@@ -1,4 +1,4 @@
 (executable
  (public_name chasm)
  (name main)
- (libraries chasm))
+ (libraries chasm chasm.emit))

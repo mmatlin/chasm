@@ -1,4 +1,5 @@
-open Instructions
+open Chasm.Instructions
+open Shared
 open Printf
 
 let width = 8L
@@ -45,26 +46,21 @@ let ins_name_of_jump_condition = function
   | SGreater -> "jg"
   | SGreaterEq -> "jge"
 
-let read_flag name flags =
-  match List.find_opt (fun (f, _) -> f = name) flags with
-  | Some (_, v) -> Some v
-  | None -> None
-
 let rec asm_of_instruction flags ins =
   match ins with
   | Move (r, v) -> sprintf "mov %s, %s" r (str_of_value v)
   | Push v -> sprintf "push %s" (str_of_value v)
   | Pop ro ->
-      begin
-      match ro with
-      | Some r -> sprintf "pop %s" r
-      | None -> asm_of_instruction flags (Add ("rsp", Immediate width))
-      end
+    begin
+    match ro with
+    | Some r -> sprintf "pop %s" r
+    | None -> asm_of_instruction flags (Add ("rsp", Immediate width))
+    end
   | Compare (v1, v2, mode) ->
-      sprintf "%s %s, %s"
-        (ins_name_of_cmp_mode mode)
-        (str_of_value v1)
-        (str_of_value v2)
+    sprintf "%s %s, %s"
+      (ins_name_of_cmp_mode mode)
+      (str_of_value v1)
+      (str_of_value v2)
   | Add (r, v) -> sprintf "add %s, %s" r (str_of_value v)
   | Sub (r, v) -> sprintf "sub %s, %s" r (str_of_value v)
   | Mul (r, v) -> sprintf "imul %s, %s" r (str_of_value v)
@@ -75,19 +71,19 @@ let rec asm_of_instruction flags ins =
   | Not r -> sprintf "not %s" r
   | ShiftLeft (r, v) -> sprintf "shl %s, %s" r (str_of_value v)
   | ShiftRight (r, v, t) ->
-      sprintf "%s %s, %s" (ins_name_of_shift_right_type t) r (str_of_value v)
+    sprintf "%s %s, %s" (ins_name_of_shift_right_type t) r (str_of_value v)
   | Jump (cond, details) ->
-      let jmpdist_part =
-        match read_flag "jmpdist" flags with
-        | Some dist -> [dist]
-        | None -> [] in
-      String.concat " " (
-        (ins_name_of_jump_condition cond)::(
-          jmpdist_part @ [
-            match details with
-            | Backward i -> sprintf "$-%Ld" i
-            | Forward i -> sprintf "$+%Ld" i
-            | Label l -> l
-          ]
-        )
+    let jmpdist_part =
+      match read_flag "jmp_dist" flags with
+      | Some dist -> [dist]
+      | None -> [] in
+    String.concat " " (
+      (ins_name_of_jump_condition cond)::(
+        jmpdist_part @ [
+          match details with
+          | Backward i -> sprintf "$-%Ld" i
+          | Forward i -> sprintf "$+%Ld" i
+          | Label l -> l
+        ]
       )
+    )

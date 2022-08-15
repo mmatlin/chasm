@@ -1,2 +1,3 @@
 (library
- (name chasm))
+ (name chasm)
+ (public_name chasm))
