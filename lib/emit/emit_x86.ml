@@ -46,16 +46,11 @@ let ins_name_of_jump_condition = function
   | SGreater -> "jg"
   | SGreaterEq -> "jge"
 
-let rec asm_of_instruction flags ins =
+let asm_of_instruction ?(flags = []) ins =
   match ins with
   | Move (r, v) -> sprintf "mov %s, %s" r (str_of_value v)
   | Push v -> sprintf "push %s" (str_of_value v)
-  | Pop ro ->
-    begin
-    match ro with
-    | Some r -> sprintf "pop %s" r
-    | None -> asm_of_instruction flags (Add ("rsp", Immediate width))
-    end
+  | Pop r -> sprintf "pop %s" r
   | Compare (v1, v2, mode) ->
     sprintf "%s %s, %s"
       (ins_name_of_cmp_mode mode)

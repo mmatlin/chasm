@@ -39,7 +39,7 @@ type value =
 type instruction =
   | Move of register * value
   | Push of value
-  | Pop of register option
+  | Pop of register
   | Compare of value * value * comparison_mode
   | Add of register * value
   | Sub of register * value

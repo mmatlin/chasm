@@ -27,25 +27,11 @@ let infix_of_jump_condition = function
   | SGreater -> Some "$>"
   | SGreaterEq -> Some "$>="
 
-let rec asm_of_instruction flags ins =
+let asm_of_instruction ?(flags = []) ins =
   match ins with
   | Move (r, v) -> sprintf "%s := %s" r (str_of_value v)
   | Push v -> sprintf "%s ->" (str_of_value v)
-  | Pop ro ->
-      begin
-      match ro with
-      | Some r -> sprintf "%s <-" r
-      | None -> (
-        match (read_flag "stack_ptr_reg" flags, read_flag "pop_width" flags) with
-        | Some r, Some w_str ->
-          begin
-          match Int64.of_string_opt w_str with
-          | Some w -> asm_of_instruction flags (Add (r, Immediate w))
-          | None -> failwith "Flag pop_width not a valid Int64"
-          end
-        | _ -> failwith "chasm pop must either take a register or the two flags \"stack_ptr_reg\" and \"pop_width\""
-      )
-      end
+  | Pop r -> sprintf "%s <-" r
   | Compare (v1, v2, mode) ->
     sprintf "%s %s %s"
       (str_of_value v1)
