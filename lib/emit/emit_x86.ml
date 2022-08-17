@@ -59,7 +59,7 @@ let asm_of_instruction ?(flags = []) ins =
   | Add (r, v) -> sprintf "add %s, %s" r (str_of_value v)
   | Sub (r, v) -> sprintf "sub %s, %s" r (str_of_value v)
   | Mul (r, v) -> sprintf "imul %s, %s" r (str_of_value v)
-  | Div _ -> failwith "x86 div instructions not supported"
+  | Div _ -> raise (EmitterError "x86 div instructions not supported")
   | And (r, v) -> sprintf "and %s, %s" r (str_of_value v)
   | Or (r, v) -> sprintf "or %s, %s" r (str_of_value v)
   | Xor (r, v) -> sprintf "xor %s, %s" r (str_of_value v)

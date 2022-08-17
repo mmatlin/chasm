@@ -23,7 +23,7 @@ type jump_condition =
   | SGreater
   | SGreaterEq
 
-type jump_details =
+type jump_destination =
   | Backward of Int64.t
   | Forward of Int64.t
   | Label of string
@@ -51,4 +51,4 @@ type instruction =
   | Not of register
   | ShiftLeft of register * value
   | ShiftRight of register * value * shift_right_type
-  | Jump of jump_condition * jump_details
+  | Jump of jump_condition * jump_destination
